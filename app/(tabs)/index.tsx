@@ -14,35 +14,55 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useMemo } from "react";
-import { FontAwesome5, FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import {
+  FontAwesome5,
+  FontAwesome6,
+  Ionicons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import DashboardMenu from "@/components/dashboard/dashboardMenu";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"];
-  const meniItemsSize = 30
+  const meniItemsSize = 30;
 
   const menuItems = [
     {
       name: "Performance",
       icon: () => (
-        <FontAwesome6 name="chart-simple" size={meniItemsSize} color={color.tabIconDefault} />
+        <FontAwesome6
+          name="chart-simple"
+          size={meniItemsSize}
+          color={color.tabIconDefault}
+        />
       ),
-      onclick: () => console.log("Performance"),
+      onclick: () =>
+        router.navigate("../performance", { relativeToDirectory: true }),
     },
     {
       name: "Class",
       icon: () => (
-        <MaterialIcons name="supervisor-account" size={meniItemsSize} color={color.tabIconDefault} />
+        <MaterialIcons
+          name="supervisor-account"
+          size={meniItemsSize}
+          color={color.tabIconDefault}
+        />
       ),
-      onclick: () => console.log("Class"),
+      onclick: () => router.navigate("../class", { relativeToDirectory: true }),
     },
     {
       name: "History",
       icon: () => (
-        <FontAwesome5 name="history" size={meniItemsSize} color={color.tabIconDefault} />
+        <FontAwesome5
+          name="history"
+          size={meniItemsSize}
+          color={color.tabIconDefault}
+        />
       ),
-      onclick: () => console.log("History"),
+      onclick: () =>
+        router.navigate("../history", { relativeToDirectory: true }),
     },
   ];
 
@@ -69,11 +89,10 @@ export default function HomeScreen() {
         },
         bottom_bot: {
           flex: 1,
-          marginRight:'15%',
-          marginLeft:'15%',
+          marginRight: "15%",
+          marginLeft: "15%",
           flexDirection: "row",
           justifyContent: "space-between",
-          
         },
         record: {
           backgroundColor: color.tabIconSelected,
@@ -107,7 +126,12 @@ export default function HomeScreen() {
       </View>
       <View style={dynamicStyles.bottom}>
         <View style={dynamicStyles.bottom_top}>
-          <TouchableOpacity style={dynamicStyles.record}>
+          <TouchableOpacity
+            style={dynamicStyles.record}
+            onPress={() =>
+              router.navigate("../record", { relativeToDirectory: true })
+            }
+          >
             <Ionicons
               name="mic-outline"
               size={50}
@@ -120,7 +144,12 @@ export default function HomeScreen() {
         </View>
         <View style={dynamicStyles.bottom_bot}>
           {menuItems.map((item, index) => (
-            <DashboardMenu key={item.name} icon={item.icon} name={item.name} onClick={item.onclick} />
+            <DashboardMenu
+              key={item.name}
+              icon={item.icon}
+              name={item.name}
+              onClick={item.onclick}
+            />
           ))}
         </View>
       </View>
