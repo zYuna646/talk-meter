@@ -15,7 +15,12 @@ export default function DashboardMenu({ icon: Icon, onClick, name }: { icon: any
           alignItems: "center",
           width:68,
           height:68,
-          borderRadius:10
+          borderRadius:10,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+          elevation: 5,
         },
       }),
     [color]

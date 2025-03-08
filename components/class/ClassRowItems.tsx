@@ -27,6 +27,11 @@ export default function ClassRowItems({ item }: {item: {name: string, id: string
           borderRadius: 10,
           padding: 10,
           flexDirection: "row",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+          elevation: 5,
         },
       }),
     [color]
