@@ -8,15 +8,18 @@ import {
 } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { Colors } from "@/constants/Colors";
-import { Class, getClasses } from "@/db/controller/ClassController";
+import { getClasses } from "@/db/controller/ClassController";
 import FloatingButtonModal from "@/components/class/fab";
 import ClassRowItems from "@/components/class/ClassRowItems";
+import { Stack } from "expo-router";
+import { Class } from "@/constants/Interface";
 
 export default function index() {
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"];
   const [classList, setClassList] = useState<Class[]>([]);
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState({ name: "" });
   useEffect(() => {
     fetchData();
   }, []);
@@ -40,14 +43,28 @@ export default function index() {
 
   return (
     <View style={dynamicStyles.main}>
+      <Stack.Screen
+        options={{
+          title: "Class",
+        }}
+      />
       <FlatList
         data={classList}
+        style={{ width: "100%" }}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <ClassRowItems item={item} />}
+        renderItem={({ item }) => (
+          <ClassRowItems fetchData={fetchData} item={{ name: item.name, id: item.id }}  setData={setData} setModalVisible={setModalVisible}/>
+        )}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
 
-      <FloatingButtonModal fetchData={fetchData} />
+      <FloatingButtonModal
+        fetchData={fetchData}
+        setData={setData}
+        data={data}
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+      />
     </View>
   );
 }

@@ -15,52 +15,70 @@ import {
 import { FAB, TextInput } from "react-native-paper";
 import { Colors } from "@/constants/Colors";
 import Toast from "react-native-toast-message";
-import { addClass } from "@/db/controller/ClassController";
-import { FloatingButtonModalProps } from "@/constants/Interface";
+import { addStudent } from "@/db/controller/StudentController";
+import DropDownPicker from "react-native-dropdown-picker";
 
-const FloatingButtonModal: React.FC<FloatingButtonModalProps> = ({
+const FloatingButtonStudentModal = ({
   fetchData,
-  data,
-  setData,
-  modalVisible,
-  setModalVisible,
+  classId,
+}: {
+  fetchData: () => void;
+  classId: number;
 }) => {
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"];
+  const [open, setOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState({
+    name: "",
+    gender: "",
+    nisn: "",
+    classId: classId,
+  });
 
-  const actionClass = async () => {
+  const [items, setItems] = useState([
+    { label: "Male", value: "L" },
+    { label: "Female", value: "P" },
+  ]);
+
+  const actionStudent = async () => {
     try {
       console.log("Data sebelum insert:", data);
 
-      if (!data.name || data.name.trim() === "") {
+      if (!data.name || !data.gender || !data.nisn) {
         Toast.show({
           type: "error",
           text1: "Error",
-          text2: "Class name is required",
+          text2: "All fields are required",
         });
         return;
       }
 
-      const success = await addClass(data.name);
+      const success = await addStudent(
+        data.name,
+        data.gender,
+        data.nisn,
+        data.classId
+      );
       if (success) {
         Toast.show({
           type: "success",
           text1: "Success",
-          text2: "Class added successfully",
+          text2: "Student added successfully",
         });
         fetchData();
       } else {
         Toast.show({
           type: "error",
           text1: "Error",
-          text2: "Failed to add class",
+          text2: "Failed to add student",
         });
       }
     } catch (error) {
-      console.log("Error in actionClass:", error);
+      console.log("Error in actionStudent:", error);
     } finally {
       setModalVisible(false);
-      setData({ name: "" });
+      setData({ name: "", gender: "", nisn: "", classId: classId });
     }
   };
 
@@ -96,18 +114,19 @@ const FloatingButtonModal: React.FC<FloatingButtonModalProps> = ({
           fontSize: 18,
           textAlign: "center",
         },
-        modalP: {
-          fontSize: 14,
-          textAlign: "center",
-          marginBottom: 10,
-        },
         modalInput: {
           borderColor: color.tabIconSelected,
           borderWidth: 1,
           width: "100%",
           height: 40,
           paddingHorizontal: 10,
+          marginBottom: 10,
           backgroundColor: color.tabIconDefault,
+        },
+        dropdown: {
+          borderColor: color.tabIconSelected,
+          borderRadius: 10,
+          marginBottom: 10,
         },
         closeButton: {
           marginTop: 15,
@@ -160,16 +179,37 @@ const FloatingButtonModal: React.FC<FloatingButtonModalProps> = ({
               keyboardShouldPersistTaps="handled"
             >
               <View style={dynamicStyles.modalContent}>
-                <Text style={dynamicStyles.modalText}>Add Class</Text>
-                <Text style={dynamicStyles.modalP}>
-                  Please input class name
-                </Text>
+                <Text style={dynamicStyles.modalText}>Add Student</Text>
+
                 <TextInput
                   style={dynamicStyles.modalInput}
-                  placeholder="Class Name..."
+                  placeholder="Student Name..."
                   value={data.name}
                   onChangeText={(value) => setData({ ...data, name: value })}
                 />
+                <DropDownPicker
+                  open={open}
+                  style={dynamicStyles.dropdown}
+                  value={data.gender}
+                  items={items}
+                  setOpen={setOpen}
+                  setValue={(callback) =>
+                    setData((prev) => ({
+                      ...prev,
+                      gender: callback(prev.gender),
+                    }))
+                  }
+                  setItems={setItems}
+                />
+
+                <TextInput
+                  style={dynamicStyles.modalInput}
+                  placeholder="NISN..."
+                  keyboardType="numeric"
+                  value={data.nisn}
+                  onChangeText={(value) => setData({ ...data, nisn: value })}
+                />
+
                 <View
                   style={{
                     flex: 1,
@@ -188,7 +228,7 @@ const FloatingButtonModal: React.FC<FloatingButtonModalProps> = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={dynamicStyles.addButton}
-                    onPress={() => actionClass()}
+                    onPress={() => actionStudent()}
                   >
                     <Text style={dynamicStyles.closeText}>Add</Text>
                   </TouchableOpacity>
@@ -202,4 +242,4 @@ const FloatingButtonModal: React.FC<FloatingButtonModalProps> = ({
   );
 };
 
-export default FloatingButtonModal;
+export default FloatingButtonStudentModal;
